@@ -13,6 +13,8 @@ export const createUser = async (req: Request, res: Response) => { // Criar usua
     try {
         let { name, login, password } = req.body
 
+        console.log('foi')
+
         // verifica se todos os campos foram preenchidos
         if (!name || !login || !password) {
             return res.status(400).json({ message: 'Preencha todos os campos!' })
@@ -49,6 +51,8 @@ export const createUser = async (req: Request, res: Response) => { // Criar usua
 export const login = async (req: Request, res: Response) => {
     try {
         let { login, password } = req.body
+
+
 
         // verifica se todos os campos foram preenchidos --->
         if (!login || !password) {
