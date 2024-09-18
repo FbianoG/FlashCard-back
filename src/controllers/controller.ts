@@ -108,11 +108,11 @@ export const createWords = async (req: CustomRequest, res: Response) => {
         }
 
         // cria a palavra
-        const query = `INSERT INTO words (native, translate, user_id) VALUES ($1, $2, $3);`
+        const query = `INSERT INTO words (native, translate, user_id) VALUES ($1, $2, $3) RETURNING *;`
         const values = [native, translate, userId]
         const result = await pool.query(query, values)
 
-        return res.status(200).json({ message: 'Palavra criada com sucesso!' })
+        return res.status(200).json({ message: 'Palavra criada com sucesso!', data: result.rows[0] })
 
     } catch (error) {
         console.log(error)
@@ -165,11 +165,11 @@ export const editWords = async (req: CustomRequest, res: Response) => {
         }
 
         // editar a palavra
-        const query = `UPDATE words SET native = $1, translate = $2 WHERE id = $3 AND user_id = $4;`
+        const query = `UPDATE words SET native = $1, translate = $2 WHERE id = $3 AND user_id = $4 RETURNING *;`
         const values = [native, translate, id, user_id]
         const result = await pool.query(query, values)
 
-        return res.status(200).json({ message: 'Palavra editada com sucesso!' })
+        return res.status(200).json({ message: 'Palavra editada com sucesso!', data: result.rows[0] })
 
     } catch (error) {
         console.log(error)
