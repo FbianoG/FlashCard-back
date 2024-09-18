@@ -139,3 +139,62 @@ export const getWords = async (req: CustomRequest, res: Response) => {
         return res.status(500).json({ message: 'Erro interno do servidor!' })
     }
 }
+
+export const editWords = async (req: CustomRequest, res: Response) => {
+    try {
+        // pegar os dados
+        let { native, translate, id } = req.body
+        const user_id = req.userId
+        if (!native || !translate || !id) {
+            return res.status(400).json({ message: 'Preencha todos os campos!' })
+        }
+        if (native.trim() === '' || translate.trim() === '') {
+            return res.status(400).json({ message: 'Preencha todos os campos!' })
+        }
+
+        // normalizar os dados
+        native = native.toLowerCase().trim()
+        translate = translate.toLowerCase().trim()
+
+        // verificar se a palavra existe
+        const searchQuery = 'SELECT * FROM words WHERE native = $1 AND user_id = $2 And id != $3;'
+        const searchValues = [native, user_id, id]
+        const searchResult = await pool.query(searchQuery, searchValues)
+        if (searchResult.rows.length > 0) {
+            return res.status(400).json({ message: 'Esta palavra já está cadastrada.' })
+        }
+
+        // editar a palavra
+        const query = `UPDATE words SET native = $1, translate = $2 WHERE id = $3 AND user_id = $4;`
+        const values = [native, translate, id, user_id]
+        const result = await pool.query(query, values)
+
+        return res.status(200).json({ message: 'Palavra editada com sucesso!' })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Erro interno do servidor!' })
+    }
+}
+
+export const deleteWords = async (req: CustomRequest, res: Response) => {
+    try {
+        // pegar os dados
+        const { id } = req.query
+        const user_id = req.userId
+        if (!id) {
+            return res.status(400).json({ message: 'O ID nao foi informado!' })
+        }
+
+        // deletar a palavra
+        const query = `DELETE FROM words WHERE id = $1 AND user_id = $2;`
+        const values = [id, user_id]
+        const result = await pool.query(query, values)
+
+        return res.status(204).json({ message: 'Palavra excluída com sucesso!' })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Erro interno do servidor!' })
+    }
+}
