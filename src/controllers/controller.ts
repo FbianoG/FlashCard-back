@@ -8,7 +8,6 @@ interface CustomRequest extends Request {
     userId?: number
 }
 
-
 export const createUser = async (req: Request, res: Response) => { // Criar usuário
     try {
         let { name, login, password } = req.body
@@ -192,6 +191,23 @@ export const deleteWords = async (req: CustomRequest, res: Response) => {
         const result = await pool.query(query, values)
 
         return res.status(204).json({ message: 'Palavra excluída com sucesso!' })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Erro interno do servidor!' })
+    }
+}
+
+export const getUsers = async (req: CustomRequest, res: Response) => {
+    try {
+        const id = req.userId
+        const query = `SELECT id, name FROM users WHERE id != $1;`
+        const values = [id]
+        const result = await pool.query(query, values)
+        if (!result) {
+            throw new Error("Erro ao buscar usuários");
+        }
+        return res.status(200).json(result.rows)
 
     } catch (error) {
         console.log(error)
