@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createUser, createWords, deleteWords, editWords, getUsers, getWords, login } from "../controllers/controller";
+import { createUser, createWords, deleteWords, editWords, getUsers, getWords, getWordsUser, login } from "../controllers/controller";
 import { verifyToken } from "../middlewares/jwt";
 
 export const router = Router()
@@ -19,3 +19,5 @@ router.get('/getWords', verifyToken, getWords)
 router.put('/editWords', verifyToken, editWords)
 
 router.delete('/deleteWords', verifyToken, deleteWords)
+
+router.post('/getWordsUser', verifyToken, getWordsUser)

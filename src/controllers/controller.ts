@@ -214,3 +214,23 @@ export const getUsers = async (req: CustomRequest, res: Response) => {
         return res.status(500).json({ message: 'Erro interno do servidor!' })
     }
 }
+
+export const getWordsUser = async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.body
+        if (!userId) {
+            return res.status(404).json({ message: 'O ID do usuário não foi informado!' })
+        }
+
+        const query = `SELECT * FROM words WHERE user_id = $1;`
+        const values = [userId]
+        const result = await pool.query(query, values)
+        if (result.rows.length === 0) {
+            return res.status(400).json({ message: 'O usuário selecionado não possui palavras cadastradas.' })
+        }
+        return res.status(200).json(result.rows)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Erro interno de servidor' })
+    }
+}
